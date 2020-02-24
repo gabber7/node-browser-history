@@ -8,8 +8,7 @@ const CHROME           = 'Google Chrome',
       SEAMONKEY        = 'SeaMonkey',
       VIVALDI          = 'Vivaldi',
       SAFARI           = 'Safari',
-      MAXTHON          = 'Maxthon',
-      INTERNETEXPLORER = 'Internet Explorer'
+      MAXTHON          = 'Maxthon'
 
 let browserDbLocations = {
   chrome:    '',
@@ -134,7 +133,6 @@ module.exports = {
   SEAMONKEY,
   VIVALDI,
   SAFARI,
-  MAXTHON,
-  INTERNETEXPLORER
+  MAXTHON
 }
 

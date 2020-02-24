@@ -112,24 +112,6 @@ function testMaxthonOnly () {
   })
 }
 
-function testInternetExplorerOnly () {
-  if (process.platform !== 'win32') {
-    console.log('Internet explorer not supported on Mac')
-    return
-  }
-  console.log('***** RUNNING GET INTERNET EXPLORER ONLY *****')
-  return new Promise(res => {
-    history.getIEHistory(60).then(history => {
-      console.log('PASS GET INTERNET EXPLORER ONLY')
-      console.log(history)
-      res(history)
-    }, error => {
-      console.log('***** FAIL TO GET INTERNET EXPLORER ONLY *****')
-      throw (error)
-    })
-  })
-}
-
 function testTorchOnly () {
   console.log('***** RUNNING GET TORCH ONLY *****')
   return new Promise(res => {
@@ -152,7 +134,6 @@ let tests = [
   //testSeaMonkeyOnly(),
   //testVivaldiOnly(),
   //testMaxthonOnly(),
-  //testInternetExplorerOnly(),
   //testTorchOnly(),
   // testGetAllHistory()
 ]

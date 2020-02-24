@@ -18,7 +18,6 @@ This module will gather browser history from common internet browsers. Given a t
 ![Vivaldi](https://i.imgur.com/GTy9hXK.png)
 
 * Google Chrome
-* Internet Explorer (Windows Only)
 * Maxthon (Mac Only)
 * Microsoft Edge (Coming Soon)
 * Mozilla Firefox
@@ -131,16 +130,6 @@ getMaxthonHistory(10).then(function (history) {
  * @returns {Promise<array>}
  */
 getVivaldiHistory(10).then(function (history) {
-  console.log(history);
-});
-
-
-/**
- * Get Internet Explorer History
- * @param historyTimeLength time is in minutes
- * @returns {Promise<array>}
- */
-getIEHistory(10).then(function (history) {
   console.log(history);
 });
 ```
