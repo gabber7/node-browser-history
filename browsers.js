@@ -9,7 +9,6 @@ const CHROME           = 'Google Chrome',
       VIVALDI          = 'Vivaldi',
       SAFARI           = 'Safari',
       MAXTHON          = 'Maxthon',
-      INTERNETEXPLORER = 'Internet Explorer',
       BRAVE            = 'Brave'
 
 let browserDbLocations = {
@@ -140,7 +139,6 @@ module.exports = {
   VIVALDI,
   SAFARI,
   MAXTHON,
-  INTERNETEXPLORER,
   BRAVE
 }
 

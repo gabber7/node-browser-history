@@ -4,15 +4,10 @@ const path    = require("path"),
       uuidV4  = require("uuid/v4"),
       moment  = require("moment")
 
-let edge                       = null,
-    browserHistoryDllPath      = "",
-    getInternetExplorerHistory = null,
+let browserHistoryDllPath      = "",
     browsers                   = require("./browsers")
 
 if (process.platform === "win32") {
-  // Check to see if electron is installed for people that want to use this with any electron applications
-  edge = process.versions.electron ? require("electron-edge-js") : require("edge-js")
-
   if (fs.existsSync(
     path.resolve(path.join(__dirname, "..", "..", "src", "renderer", "assets", "dlls", "IEHistoryFetcher.dll")))) {
     browserHistoryDllPath = path.join(
@@ -26,13 +21,6 @@ if (process.platform === "win32") {
   else {
     browserHistoryDllPath = path.resolve(path.join(__dirname, "dlls", "IEHistoryFetcher.dll"))
   }
-
-  getInternetExplorerHistory = edge.func(
-    {
-      assemblyFile: browserHistoryDllPath,
-      typeName: "BrowserHistory.Fetcher",
-      methodName: "getInternetExplorer"
-    })
 }
 
 /**
@@ -63,45 +51,9 @@ async function getBrowserHistory (paths = [], browserName, historyTimeLength) {
       case browsers.SAFARI:
         return await getSafariBasedBrowserRecords(paths, browserName, historyTimeLength)
 
-      case browsers.INTERNETEXPLORER:
-        //Only do this on Windows we have to do t his here because the DLL manages this
-        if (process.platform !== "win32") {
-          return []
-        }
-        return await getInternetExplorerBasedBrowserRecords(historyTimeLength)
-
       default:
         return []
     }
-}
-
-function getInternetExplorerBasedBrowserRecords (historyTimeLength) {
-  let internetExplorerHistory = []
-  return new Promise((resolve, reject) => {
-    getInternetExplorerHistory(null, (error, s) => {
-      if (error) {
-        throw(error)
-      }
-      else {
-        let currentTime    = moment.utc()
-        let fiveMinutesAgo = currentTime.subtract(historyTimeLength, "minutes")
-        s.forEach(record => {
-          let lastVisited = moment.utc(record.LastVisited)
-          if (lastVisited > fiveMinutesAgo) {
-            if (!record.URL.startsWith("file:///")) {
-              internetExplorerHistory.push({
-                title: record.Title,
-                utc_time: lastVisited.valueOf(),
-                url: record.URL,
-                browser: browsers.INTERNETEXPLORER
-              })
-            }
-          }
-        })
-        resolve(internetExplorerHistory)
-      }
-    })
-  })
 }
 
 function getChromeBasedBrowserRecords (paths, browserName, historyTimeLength) {
@@ -562,20 +514,6 @@ async function getVivaldiHistory (historyTimeLength = 5) {
 }
 
 /**
- * Get Internet Explorer History
- * @param historyTimeLength time is in minutes
- * @returns {Promise<array>}
- */
-async function getIEHistory (historyTimeLength = 5) {
-  let getRecords = [
-    getBrowserHistory([], browsers.INTERNETEXPLORER, historyTimeLength)
-  ]
-  Promise.all(getRecords).then((records) => {
-    return records
-  }, error => { throw error })
-}
-
-/**
  * Gets the history for the Specified browsers and time in minutes.
  * Returns an array of browser records.
  * @param historyTimeLength | Integer
@@ -605,8 +543,6 @@ async function getAllHistory (historyTimeLength = 5) {
   allBrowserRecords = allBrowserRecords.concat(await getBrowserHistory(browsers.browserDbLocations.vivaldi, browsers.VIVALDI, historyTimeLength))
   allBrowserRecords = allBrowserRecords.concat(await getBrowserHistory(browsers.browserDbLocations.seamonkey, browsers.SEAMONKEY, historyTimeLength))
   allBrowserRecords = allBrowserRecords.concat(await getBrowserHistory(browsers.browserDbLocations.maxthon, browsers.MAXTHON, historyTimeLength))
-  //No Path because this is handled by the dll
-  allBrowserRecords = allBrowserRecords.concat(await getBrowserHistory([], browsers.INTERNETEXPLORER, historyTimeLength))
 
   return allBrowserRecords
 }
@@ -621,7 +557,6 @@ module.exports = {
   getBraveHistory,
   getSafariHistory,
   getMaxthonHistory,
-  getVivaldiHistory,
-  getIEHistory
+  getVivaldiHistory
 }
 
