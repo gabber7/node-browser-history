@@ -37,7 +37,15 @@ let defaultPaths = {
   brave:     ''
 }
 
-if (process.platform !== 'darwin') {
+if (process.platform === 'linux') {
+  let homeDirectory = process.env.HOME
+
+  defaultPaths.chrome    = path.join(homeDirectory, '.config', 'google-chrome')
+  defaultPaths.firefox   = path.join(homeDirectory, '.mozilla', 'firefox')
+
+  process.env.TMP = '/tmp'
+}
+else if (process.platform !== 'darwin') {
 
   let basePath = path.join(process.env.HOMEDRIVE, 'Users', process.env.USERNAME, 'AppData')
 
@@ -85,7 +93,7 @@ function findFilesInDir (startPath, filter, regExp = new RegExp('.*')) {
     let filename = path.join(startPath, files[i])
     if (!fs.existsSync(filename)) {
       //console.log('file doesn\'t exist ', startPath);
-      return results
+      continue
     }
     let stat = fs.lstatSync(filename)
     if (stat.isDirectory()) {
@@ -115,7 +123,7 @@ function findPaths (path, browserName) {
       case TORCH:
       case OPERA:
       case BRAVE:
-        return findFilesInDir(path, 'History', /History$/)
+        return findFilesInDir(path, '/History', /History$/)
       case VIVALDI:
         return findFilesInDir(path, '.sqlite')
       case SAFARI:
